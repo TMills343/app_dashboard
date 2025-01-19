@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  flask-app:
+    build: .
+    ports:
+      - "2390:5000"
+    volumes:
+      - ./templates:/usr/src/app/templates  # Map the folder containing HTML templates if you have any
+      - .:/app
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_ENV=development
+      - MONGO_URI=${MONGO_URI}  # Make sure this is set correctly, either in your environment or Portainer
+    restart: always  # Ensure the service restarts if it goes down

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mills House Applications</title>
+    <link rel="icon" href="/static/images/M.webp" type="image/x-icon">
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Mills House Applications</h1>
+
+        <!-- Tiles Container -->
+        <div class="tiles-container" id="tiles-container"></div>
+
+        <!-- Add New Tile Button as a tile -->
+        <div id="addTileButton" class="tile add-tile">
+            <div class="tile-content">
+                <img src="/static/images/plus-icon.webp" alt="Add Icon" class="tile-icon">
+                <h2 class="tile-title">+ Add New Application</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Modal -->
+    <div id="formModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <form id="newTileForm">
+                <h2>Add New Application</h2>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="url">URL:</label>
+                <input type="url" id="url" name="url" required>
+
+                <label for="icon">Icon URL:</label>
+                <input type="text" id="icon" name="icon" required>
+
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+
+                <!-- Password Field -->
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+
+                <div class="form-buttons">
+                    <button type="submit">Submit</button>
+                    <button type="button" onclick="closeForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const correctPassword = "yourPasswordHere";  // Replace with your actual password
+
+        // Fetch apps data from the backend
+        fetch('/get_apps')
+            .then(response => response.json())
+            .then(apps => {
+                const tilesContainer = document.getElementById('tiles-container');
+
+                apps.forEach(app => {
+                    const tile = document.createElement('div');
+                    tile.classList.add('tile');
+                    tile.innerHTML = `
+                        <a href="${app.url}" class="tile-link">
+                            <div class="tile-content">
+                                <img src="${app.icon}" alt="App Icon" class="tile-icon">
+                                <h2 class="tile-title">${app.name}</h2>
+                                <p class="tile-description">${app.description}</p>
+                            </div>
+                        </a>
+                    `;
+                    tilesContainer.appendChild(tile);
+                });
+
+                // Ensure the "Add New Application" button is always at the end
+                const addTileButton = document.getElementById('addTileButton');
+                tilesContainer.appendChild(addTileButton);
+
+                // Add event listener to the "Add New Application" button
+                addTileButton.addEventListener('click', showForm);
+            })
+            .catch(error => console.error('Error fetching apps:', error));
+
+        // Show form to add new tile
+        function showForm() {
+            document.getElementById('formModal').style.display = 'block';
+        }
+
+        // Close form modal
+        function closeForm() {
+            document.getElementById('formModal').style.display = 'none';
+        }
+
+        // Handle form submission
+        document.getElementById('newTileForm').onsubmit = function(event) {
+            event.preventDefault();
+
+            // Gather form data
+            const name = document.getElementById('name').value;
+            const url = document.getElementById('url').value;
+            const icon = document.getElementById('icon').value;
+            const description = document.getElementById('description').value;
+            const password = document.getElementById('password').value;
+
+            // Check if the password is correct
+            if (password !== correctPassword) {
+                alert('Incorrect password!');
+                return;
+            }
+
+            // Send data to backend to save in MongoDB
+            fetch('/add_new_app', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, url, icon, description })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Add the new tile to the page dynamically
+                    addNewTile(name, url, icon, description);
+                    closeForm();
+                    alert('Tile added successfully!');
+                } else {
+                    alert('Failed to add tile');
+                }
+            });
+        };
+
+        // Dynamically add new tile to the tiles container
+        function addNewTile(name, url, icon, description) {
+            const tilesContainer = document.getElementById('tiles-container');
+            const tile = document.createElement('div');
+            tile.classList.add('tile');
+            tile.innerHTML = `
+                <a href="${url}" class="tile-link">
+                    <div class="tile-content">
+                        <img src="${icon}" alt="App Icon" class="tile-icon">
+                        <h2 class="tile-title">${name}</h2>
+                        <p class="tile-description">${description}</p>
+                    </div>
+                </a>
+            `;
+            tilesContainer.appendChild(tile);
+
+            // Move the "Add New Application" button to the last position
+            const addTileButton = document.getElementById('addTileButton');
+            tilesContainer.appendChild(addTileButton);
+        }
+    </script>
+</body>
+</html>
