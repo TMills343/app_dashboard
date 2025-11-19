@@ -45,5 +45,24 @@ def add_new_app():
     return {"success": True, "message": "App added successfully"}, 200
 
 
+@app.route("/delete_app", methods=["POST"])
+def delete_app():
+    """Delete an app by a unique identifier (name used here)."""
+    try:
+        data = request.get_json(force=True)
+    except Exception:
+        return {"success": False, "error": "Invalid JSON"}, 400
+
+    name = (data or {}).get("name")
+    if not name:
+        return {"success": False, "error": "Missing 'name' field"}, 400
+
+    result = collection.delete_one({"name": name})
+    if result.deleted_count == 0:
+        return {"success": False, "error": "App not found"}, 404
+
+    return {"success": True, "message": "App deleted successfully"}, 200
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=2390)
