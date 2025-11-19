@@ -30,7 +30,9 @@ collection = db["app_details"]
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    # Dashboard title configurable via env var; fallback keeps existing default
+    title = os.getenv('DASHBOARD_TITLE', 'App Dashboard')
+    return render_template("index.html", dashboard_title=title)
 
 
 @app.route("/get_apps", methods=["GET"])

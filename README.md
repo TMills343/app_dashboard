@@ -27,6 +27,9 @@ Set these on your host, in Portainer, or via docker‑compose.
   - Password required for admin operations (adding or deleting apps). Not exposed to clients.
 - SECRET_KEY (strongly recommended)
   - Flask secret key used for session signing. If omitted, the app generates a temporary key per runtime and logs a warning. Sessions will reset on restart.
+ - DASHBOARD_TITLE (optional)
+   - Customizes the page title and header shown on the dashboard.
+   - Default (if not set): "Mills House Applications".
 
 
 MongoDB setup
@@ -70,10 +73,12 @@ Prereqs: Python 3.10+ and a reachable MongoDB.
      $env:MONGO_URI = "mongodb://user:pass@localhost:27017/app_dashboard"
      $env:ADMIN_PASSWORD = "changeme"
      $env:SECRET_KEY = "a-long-random-string"
+     $env:DASHBOARD_TITLE = "My Team Apps"
    - On macOS/Linux (bash):
      export MONGO_URI="mongodb://user:pass@localhost:27017/app_dashboard"
      export ADMIN_PASSWORD="changeme"
      export SECRET_KEY="a-long-random-string"
+     export DASHBOARD_TITLE="My Team Apps"
 3) Start the app:
    - python app.py
 4) Open your browser to:
@@ -92,6 +97,7 @@ Docker build and run (single container):
        -e MONGO_URI="mongodb://user:pass@mongo:27017/app_dashboard" \
        -e ADMIN_PASSWORD="changeme" \
        -e SECRET_KEY="a-long-random-string" \
+       -e DASHBOARD_TITLE="My Team Apps" \
        --name app_dashboard app_dashboard:latest
 
 docker-compose
@@ -102,12 +108,31 @@ An example docker-compose.yml is included. Typical usage:
 3) Stop:
    - docker compose down
 
+Example compose environment section
+The included docker-compose.yml passes through these variables so you can set them via your shell, a .env file, or Portainer:
+
+  environment:
+    - MONGO_URI=${MONGO_URI}
+    - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+    - SECRET_KEY=${SECRET_KEY}
+    - DASHBOARD_TITLE=${DASHBOARD_TITLE}
+
+Optional .env file (same directory as docker-compose.yml):
+  MONGO_URI=mongodb://user:pass@mongo:27017/app_dashboard
+  ADMIN_PASSWORD=changeme
+  SECRET_KEY=a-long-random-string
+  DASHBOARD_TITLE=My Team Apps
+
+With a .env file present, you can simply run:
+  docker compose up -d
+
 Portainer deployment
 - Create a new stack or container in Portainer.
 - Set environment variables:
   - MONGO_URI=mongodb://user:pass@mongo:27017/app_dashboard
   - ADMIN_PASSWORD=your-admin-password
   - SECRET_KEY=your-very-long-random-secret
+  - DASHBOARD_TITLE=My Team Apps (optional)
 - Publish port 2390 to your host.
 - Ensure the MongoDB service is reachable from the app container (same network or accessible address).
 

@@ -13,4 +13,7 @@ services:
       - FLASK_RUN_HOST=0.0.0.0
       - FLASK_ENV=development
       - MONGO_URI=${MONGO_URI}  # Make sure this is set correctly, either in your environment or Portainer
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - SECRET_KEY=${SECRET_KEY}
+      - DASHBOARD_TITLE=${DASHBOARD_TITLE}
     restart: always  # Ensure the service restarts if it goes down
