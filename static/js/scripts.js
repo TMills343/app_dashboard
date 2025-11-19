@@ -1,5 +1,5 @@
-// Note: Replace this with a secure method in production. Do not hardcode passwords client-side.
-const correctPassword = "yourPasswordHere";
+// Note: Password validation is performed on the server.
+// Do not hardcode or fetch admin passwords client-side.
 
 // Fetch apps data from the backend and render tiles
 fetch('/get_apps')
@@ -59,29 +59,28 @@ document.getElementById('newTileForm').onsubmit = function (event) {
   const description = document.getElementById('description').value;
   const password = document.getElementById('password').value;
 
-  // Check if the password is correct
-  if (password !== correctPassword) {
-    alert('Incorrect password!');
-    return;
-  }
-
   // Send data to backend to save in MongoDB
   fetch('/add_new_app', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ name, url, icon, description }),
+    body: JSON.stringify({ name, url, icon, description, admin_password: password }),
   })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
+    .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })))
+    .then(({ ok, status, data }) => {
+      if (ok && data.success) {
         // Add the new tile to the page dynamically
         addNewTile(name, url, icon, description);
         closeForm();
         alert('Tile added successfully!');
       } else {
-        alert('Failed to add tile');
+        const msg = (data && data.error) ? data.error : 'Failed to add tile';
+        if (status === 401) {
+          alert('Unauthorized: ' + msg);
+        } else {
+          alert(msg);
+        }
       }
     });
 };
@@ -121,20 +120,16 @@ function attachDeleteHandler(buttonEl, appName, tileEl) {
     e.preventDefault();
     e.stopPropagation();
 
-    const entered = window.prompt('Enter password to remove this app:');
+    const entered = window.prompt('Enter admin password to remove this app:');
     if (entered === null) return; // user cancelled
-    if (entered !== correctPassword) {
-      alert('Incorrect password!');
-      return;
-    }
 
     fetch('/delete_app', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: appName })
+      body: JSON.stringify({ name: appName, admin_password: entered })
     })
       .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })))
-      .then(({ ok, data }) => {
+      .then(({ ok, status, data }) => {
         if (ok && data.success) {
           // remove tile from DOM
           if (tileEl && tileEl.parentNode) {
@@ -142,7 +137,12 @@ function attachDeleteHandler(buttonEl, appName, tileEl) {
           }
           alert('App removed.');
         } else {
-          alert('Failed to remove app' + (data && data.error ? `: ${data.error}` : ''));
+          const msg = data && data.error ? data.error : 'Failed to remove app';
+          if (status === 401) {
+            alert('Unauthorized: ' + msg);
+          } else {
+            alert('Failed to remove app' + (msg ? `: ${msg}` : ''));
+          }
         }
       })
       .catch(() => alert('Network error while removing app'));
