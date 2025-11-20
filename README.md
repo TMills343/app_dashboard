@@ -29,7 +29,7 @@ Set these on your host, in Portainer, or via docker‑compose.
   - Flask secret key used for session signing. If omitted, the app generates a temporary key per runtime and logs a warning. Sessions will reset on restart.
  - DASHBOARD_TITLE (optional)
    - Customizes the page title and header shown on the dashboard.
-   - Default (if not set): "Mills House Applications".
+   - Default (if not set): "App Dashboard".
 
 
 MongoDB setup
