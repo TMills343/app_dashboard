@@ -113,13 +113,15 @@ h1 {
     padding: 30px;
     border-radius: 10px;
     width: 400px;
-    text-align: center;
+    /* Left-align the form controls, center only the header explicitly */
+    text-align: left;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Subtle shadow for modal */
     box-sizing: border-box;
 }
 
 .modal-content h2 {
     color: #ffffff; /* White color for header */
+    text-align: center; /* Keep the modal title centered */
 }
 
 /* Form Inputs */
@@ -132,6 +134,14 @@ h1 {
     border-radius: 5px;
     margin-bottom: 15px;
     width: 100%;
+    /* Ensure padding and border are included in the width to keep equal left/right gutters */
+    box-sizing: border-box;
+}
+
+/* Make labels line up with inputs and use consistent spacing */
+.modal-content label {
+    display: block;
+    margin: 8px 0 6px;
 }
 
 .modal-content button {
