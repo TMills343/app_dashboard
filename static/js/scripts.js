@@ -40,7 +40,8 @@ fetch('/get_apps')
 
 // Show form to add new tile
 function showForm() {
-  document.getElementById('formModal').style.display = 'block';
+  // Use flex to honor the modal's flexbox centering styles in CSS
+  document.getElementById('formModal').style.display = 'flex';
 }
 
 // Close form modal (used by inline onClick in HTML)
