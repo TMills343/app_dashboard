@@ -1,6 +1,9 @@
 App Dashboard
 =================
 
+  <img width="1198" height="344" alt="image" src="https://github.com/user-attachments/assets/6d358561-e7ba-41c7-9558-2e790d0c70d2" />
+
+
 A lightweight Flask + MongoDB web app to keep all your self‑hosted (or external) applications accessible in one place. It renders a simple, tile‑based dashboard backed by MongoDB. You can add or remove app tiles from the UI with a simple admin password.
 
 Why this is valuable
@@ -174,9 +177,6 @@ Troubleshooting
   - Confirm MONGO_URI is correct and MongoDB accepts connections from your app environment.
 - Icons not showing
   - Ensure the icon field contains a valid URL or a path to a file under static/ (e.g., /static/images/your-icon.png).
-
-  <img width="1198" height="344" alt="image" src="https://github.com/user-attachments/assets/6d358561-e7ba-41c7-9558-2e790d0c70d2" />
-
 
 
 FAQ
