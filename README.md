@@ -175,6 +175,9 @@ Troubleshooting
 - Icons not showing
   - Ensure the icon field contains a valid URL or a path to a file under static/ (e.g., /static/images/your-icon.png).
 
+  <img width="1198" height="344" alt="image" src="https://github.com/user-attachments/assets/6d358561-e7ba-41c7-9558-2e790d0c70d2" />
+
+
 
 FAQ
 Q: Can I change the database/collection names?
